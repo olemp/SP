@@ -18,4 +18,5 @@ tmpl.set_HtmlTemplate(` <div>
                             <h3>{{Title}}</h3>
                             <h4>{{Path}}</h4>
                         </div>`);
-tmpl.register();```
+tmpl.register();
+```
