@@ -1,4 +1,9 @@
-let _item_template_js_cache = {};
+/**
+ * Declaring Srch, RegisterModuleInit and $getItemValue
+ */
+declare var Srch: any;
+declare function $getItemValue(ctx, key): any;
+declare function RegisterModuleInit(path: string, regFunc: Function): any;
 
 /**
  * Defines a Item Template
@@ -6,7 +11,7 @@ let _item_template_js_cache = {};
 class ItemTemplate {
     private filename: string;
     private propertyMappings: any;
-    private TargetControlType: Array<string>;
+    private targetControlType: Array<string>;
     private htmlTemplate: string;
 
     /**
@@ -19,7 +24,7 @@ class ItemTemplate {
     constructor(filename: string, propertyMappings: any, targetControlType: Array<string>) {
         this.filename = filename.toLowerCase();
         this.propertyMappings = propertyMappings;
-        this.TargetControlType = targetControlType;
+        this.targetControlType = targetControlType;
     }
 
     /**
@@ -38,8 +43,7 @@ class ItemTemplate {
             if (scriptUrl.indexOf("?") > 0) {
                 scriptUrl = scriptUrl.split("?")[0];
             }
-            _templateAbsPath = `~sitecollection${scriptUrl.substr(scriptUrl.indexOf("/_catalogs/"))}`;
-            _templateAbsPath = decodeURI(_templateAbsPath);
+            _templateAbsPath = decodeURI(`~sitecollection${scriptUrl.substr(scriptUrl.indexOf("/_catalogs/"))}`);
         }
         return _templateAbsPath;
     }
@@ -60,22 +64,22 @@ class ItemTemplate {
     /**
      * Renders the template
      */
-    private render(ctx): string {
+    private render(ctx: any, _ctx: ItemTemplate): string {
         let itemTemplateId = ctx.ClientControl.get_itemTemplateId().toLowerCase();
         let cachePreviousTemplateData = ctx.DisplayTemplateData;
         ctx.DisplayTemplateData = {
             "TemplateUrl": itemTemplateId,
             "TemplateType": "Item",
-            "TargetControlType": _item_template_js_cache[itemTemplateId].TargetControlType,
-            "ManagedPropertyMapping": _item_template_js_cache[itemTemplateId].PropertyMappings,
+            "TargetControlType": _ctx.targetControlType,
+            "ManagedPropertyMapping": _ctx.propertyMappings,
         };
         let cachePreviousItemValuesFunction = ctx.ItemValues;
         ctx.ItemValues = (slotOrPropName) => {
             return Srch.ValueInfo.getCachedCtxItemValue(ctx, slotOrPropName);
         };
         let itemValues = {};
-        Object.keys(ctx.DisplayTemplateData.ManagedPropertyMapping).forEach(key => itemValues[key] = $getItemValue(ctx, key));
-        let htmlMarkup = _item_template_js_cache["replaceTokens"](_item_template_js_cache[itemTemplateId].HtmlTemplate, itemValues);
+        Object.keys(_ctx.propertyMappings).forEach(key => itemValues[key] = $getItemValue(ctx, key));
+        let htmlMarkup = _ctx.replaceTokens(_ctx.htmlTemplate, itemValues);
         ctx.ItemValues = cachePreviousItemValuesFunction;
         ctx.DisplayTemplateData = cachePreviousTemplateData;
         return htmlMarkup;
@@ -93,14 +97,10 @@ class ItemTemplate {
     public register(): void {
         let absPath = this.templateAbsPath();
         if (absPath) {
-            _item_template_js_cache["replaceTokens"] = this.replaceTokens;
-            _item_template_js_cache[absPath] = {
-                TargetControlType: this.TargetControlType,
-                PropertyMappings: this.propertyMappings,
-                HtmlTemplate: this.htmlTemplate,
-            };
             if ("undefined" !== typeof (Srch) && "undefined" !== typeof (Srch.U) && typeof (Srch.U.registerRenderTemplateByName) === "function") {
-                Srch.U.registerRenderTemplateByName(absPath, this.render);
+                Srch.U.registerRenderTemplateByName(absPath, (ctx) => {
+                    return this.render(ctx, this);
+                });
             }
             if (typeof (RegisterModuleInit) === "function" && typeof (Srch.U.replaceUrlTokens) === "function") {
                 RegisterModuleInit(Srch.U.replaceUrlTokens(absPath), this.register);

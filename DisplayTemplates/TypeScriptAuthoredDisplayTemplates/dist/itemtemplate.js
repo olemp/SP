@@ -1,4 +1,3 @@
-var _item_template_js_cache = {};
 /**
  * Defines a Item Template
  */
@@ -13,7 +12,7 @@ var ItemTemplate = (function () {
     function ItemTemplate(filename, propertyMappings, targetControlType) {
         this.filename = filename.toLowerCase();
         this.propertyMappings = propertyMappings;
-        this.TargetControlType = targetControlType;
+        this.targetControlType = targetControlType;
     }
     /**
      * Find the absolute path of the template
@@ -31,8 +30,7 @@ var ItemTemplate = (function () {
             if (scriptUrl.indexOf("?") > 0) {
                 scriptUrl = scriptUrl.split("?")[0];
             }
-            _templateAbsPath = "~sitecollection" + scriptUrl.substr(scriptUrl.indexOf("/_catalogs/"));
-            _templateAbsPath = decodeURI(_templateAbsPath);
+            _templateAbsPath = decodeURI("~sitecollection" + scriptUrl.substr(scriptUrl.indexOf("/_catalogs/")));
         }
         return _templateAbsPath;
     };
@@ -51,22 +49,22 @@ var ItemTemplate = (function () {
     /**
      * Renders the template
      */
-    ItemTemplate.prototype.render = function (ctx) {
+    ItemTemplate.prototype.render = function (ctx, _ctx) {
         var itemTemplateId = ctx.ClientControl.get_itemTemplateId().toLowerCase();
         var cachePreviousTemplateData = ctx.DisplayTemplateData;
         ctx.DisplayTemplateData = {
             "TemplateUrl": itemTemplateId,
             "TemplateType": "Item",
-            "TargetControlType": _item_template_js_cache[itemTemplateId].TargetControlType,
-            "ManagedPropertyMapping": _item_template_js_cache[itemTemplateId].PropertyMappings
+            "TargetControlType": _ctx.targetControlType,
+            "ManagedPropertyMapping": _ctx.propertyMappings
         };
         var cachePreviousItemValuesFunction = ctx.ItemValues;
         ctx.ItemValues = function (slotOrPropName) {
             return Srch.ValueInfo.getCachedCtxItemValue(ctx, slotOrPropName);
         };
         var itemValues = {};
-        Object.keys(ctx.DisplayTemplateData.ManagedPropertyMapping).forEach(function (key) { return itemValues[key] = $getItemValue(ctx, key); });
-        var htmlMarkup = _item_template_js_cache["replaceTokens"](_item_template_js_cache[itemTemplateId].HtmlTemplate, itemValues);
+        Object.keys(_ctx.propertyMappings).forEach(function (key) { return itemValues[key] = $getItemValue(ctx, key); });
+        var htmlMarkup = _ctx.replaceTokens(_ctx.htmlTemplate, itemValues);
         ctx.ItemValues = cachePreviousItemValuesFunction;
         ctx.DisplayTemplateData = cachePreviousTemplateData;
         return htmlMarkup;
@@ -80,16 +78,13 @@ var ItemTemplate = (function () {
         this.htmlTemplate = htmlTmpl;
     };
     ItemTemplate.prototype.register = function () {
+        var _this = this;
         var absPath = this.templateAbsPath();
         if (absPath) {
-            _item_template_js_cache["replaceTokens"] = this.replaceTokens;
-            _item_template_js_cache[absPath] = {
-                TargetControlType: this.TargetControlType,
-                PropertyMappings: this.propertyMappings,
-                HtmlTemplate: this.htmlTemplate
-            };
             if ("undefined" !== typeof (Srch) && "undefined" !== typeof (Srch.U) && typeof (Srch.U.registerRenderTemplateByName) === "function") {
-                Srch.U.registerRenderTemplateByName(absPath, this.render);
+                Srch.U.registerRenderTemplateByName(absPath, function (ctx) {
+                    return _this.render(ctx, _this);
+                });
             }
             if (typeof (RegisterModuleInit) === "function" && typeof (Srch.U.replaceUrlTokens) === "function") {
                 RegisterModuleInit(Srch.U.replaceUrlTokens(absPath), this.register);
