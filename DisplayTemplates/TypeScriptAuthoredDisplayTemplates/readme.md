@@ -1,4 +1,4 @@
-## TypeScript Item Starter Template (SP Search)
+## TypeScript Authored Display Templates (SP Search)
 
 ### Introduction
 TypeScript Item Starter template that makes it easier to create and use Display Templates when you don't have publishing enabled at Site Collection level. Based on [Item_Minimal.js](https://github.com/SPCSR/DisplayTemplates/blob/master/Search%20Display%20Templates/JavaScript%20Starter%20Template/Item_Minimal.js) from [Elio Struyf](https://github.com/estruyf).
