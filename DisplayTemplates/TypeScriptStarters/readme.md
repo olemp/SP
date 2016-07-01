@@ -1,0 +1,1 @@
+# TypeScript Item Starter Template (SP Search)
