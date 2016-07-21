@@ -54,8 +54,8 @@ class ControlTemplate {
     /**
      * Renders the items
      */
-    private itemRendering(itemRenderResult, inCtx, tpl): string {
-        return String.format(this.itemWrapperTemplate, itemRenderResult);
+    private itemRendering(_ctx: ControlTemplate, itemRenderResult, inCtx, tpl): string {
+        return String.format(_ctx.itemWrapperTemplate, itemRenderResult);
     }
 
     /**
@@ -107,7 +107,9 @@ class ControlTemplate {
             return "";
         }
         ctx.ListDataJSONGroupsKey = "ResultTables";
-        ctx.ItemRenderWrapper = _ctx.itemRendering;
+        ctx.ItemRenderWrapper = (itemRenderResult, inCtx, tpl) => {
+            return _ctx.itemRendering(_ctx, itemRenderResult, inCtx, tpl);
+        } 
         let htmlMarkup = String.format(this.htmlTemplate || `<ul class="cbs-List">{0}</ul>`, ctx.RenderGroups(ctx));
         if (ctx.ClientControl.get_showPaging()) {
             htmlMarkup += this.renderPaging(ctx);
