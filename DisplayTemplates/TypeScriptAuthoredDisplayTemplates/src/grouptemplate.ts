@@ -45,13 +45,6 @@ class GroupTemplate {
     }
 
     /**
-     * Renders the items
-     */
-    private itemRendering(itemRenderResult, inCtx, tpl): string {
-        return String.format(this.itemWrapperTemplate || `<li>{0}</li>`, itemRenderResult);
-    }
-
-    /**
      * Renders the template
      */
     private render(ctx: any, _ctx: GroupTemplate): string {
