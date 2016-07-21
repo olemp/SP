@@ -55,9 +55,6 @@ class GroupTemplate {
             "TemplateType": "Group",
             "TargetControlType": _ctx.targetControlType,
         };
-        if (!$isNull(ctx.ClientControl) && !$isNull(ctx.ClientControl.shouldRenderControl) && !ctx.ClientControl.shouldRenderControl()) {
-            return "";
-        }
         ctx.ListDataJSONGroupsKey = "ResultRows";
         ctx.DisplayTemplateData = cachePreviousTemplateData;
         return ctx.RenderItems(ctx);
