@@ -15,7 +15,7 @@ class ControlTemplate {
     private filename: string;
     private targetControlType: Array<string>;
     private htmlTemplate: string;
-    private itemWrapperTemplate: string;
+    private itemWrapperTemplate = "<li>{0}</li>";
     private useCache: boolean;
 
     /**
@@ -55,7 +55,7 @@ class ControlTemplate {
      * Renders the items
      */
     private itemRendering(itemRenderResult, inCtx, tpl): string {
-        return String.format(this.itemWrapperTemplate || `<li>{0}</li>`, itemRenderResult);
+        return String.format(this.itemWrapperTemplate, itemRenderResult);
     }
 
     /**
