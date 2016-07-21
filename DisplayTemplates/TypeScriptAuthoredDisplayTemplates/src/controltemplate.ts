@@ -63,34 +63,33 @@ class ControlTemplate {
      */
     private renderPaging(ctx: any) {
         var pagingInfo = ctx.ClientControl.get_pagingInfo(), ms_outHtml = [];
-        if (pagingInfo.length > 0) {
-            ms_outHtml.push(`<ul id="Paging" class="ms-srch-Paging">`);
-            for (var i = 0; i < pagingInfo.length; i++) {
-                var pl = pagingInfo[i];
-                if (!$isNull(pl)) {
-                    var imagesUrl = GetThemedImageUrl('searchresultui.png');
-                    if (pl.startItem == -1) {
-                        var selfLinkId = "SelfLink_" + pl.pageNumber;
-                        ms_outHtml.push(`<li id="PagingSelf"><a id="${$htmlEncode(selfLinkId)}">${$htmlEncode(pl.pageNumber)}</a></li>`);
-                    } else if (pl.pageNumber == -1) {
-                        var iconClass = Srch.U.isRTL() ? "ms-srch-pagingNext" : "ms-srch-pagingPrev";
-                        ms_outHtml.push(`<li id="PagingImageLink"><a id="PageLinkPrev" href="#" class="ms-commandLink ms-promlink-button ms-promlink-button-enabled ms-verticalAlignMiddle" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);"><span class="ms-promlink-button-image"><img src="${$urlHtmlEncode(imagesUrl)}" class="${$htmlEncode(iconClass)}" alt="${$htmlEncode(pl.title)}" /></span></a></li>`);
-                    } else if (pl.pageNumber == -2) {
-                        var iconClass = Srch.U.isRTL() ? "ms-srch-pagingPrev" : "ms-srch-pagingNext";
-                        ms_outHtml.push(`<li id="PagingImageLink"><a id="PageLinkNext" href="#" class="ms-commandLink ms-promlink-button ms-promlink-button-enabled ms-verticalAlignMiddle" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">
+        if (!pagingInfo || pagingInfo.length == 0) {
+            return;
+        }
+        let _outHtml = pagingInfo.map(pl => {
+            if ($isNull(pl)) {
+                return "";
+            }
+            let imagesUrl = GetThemedImageUrl('searchresultui.png');
+            if (pl.startItem == -1) {
+                let selfLinkId = "SelfLink_" + pl.pageNumber;
+                return `<li id="PagingSelf"><a id="${$htmlEncode(selfLinkId)}">${$htmlEncode(pl.pageNumber)}</a></li>`;
+            } else if (pl.pageNumber == -1) {
+                let iconClass = Srch.U.isRTL() ? "ms-srch-pagingNext" : "ms-srch-pagingPrev";
+                return `<li id="PagingImageLink"><a id="PageLinkPrev" href="#" class="ms-commandLink ms-promlink-button ms-promlink-button-enabled ms-verticalAlignMiddle" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);"><span class="ms-promlink-button-image"><img src="${$urlHtmlEncode(imagesUrl)}" class="${$htmlEncode(iconClass)}" alt="${$htmlEncode(pl.title)}" /></span></a></li>`;
+            } else if (pl.pageNumber == -2) {
+                let iconClass = Srch.U.isRTL() ? "ms-srch-pagingPrev" : "ms-srch-pagingNext";
+                return `<li id="PagingImageLink"><a id="PageLinkNext" href="#" class="ms-commandLink ms-promlink-button ms-promlink-button-enabled ms-verticalAlignMiddle" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">
                             <span class="ms-promlink-button-image">
                             <img src="${$urlHtmlEncode(imagesUrl)}" class="${$htmlEncode(iconClass)}" alt="${$htmlEncode(pl.title)}" />
                             </span>
-                            </a></li>`);
-                    } else {
-                        var pageLinkId = "PageLink_" + pl.pageNumber;
-                        ms_outHtml.push(`<li id="PagingLink"><a id="${$htmlEncode(pageLinkId)}" href="#" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">${$htmlEncode(pl.pageNumber)}</a></li>`);
-                    }
-                }
+                            </a></li>`;
+            } else {
+                return `<li id="PagingLink"><a id="${$htmlEncode("PageLink_" + pl.pageNumber)}" href="#" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">${$htmlEncode(pl.pageNumber)}</a></li>`;
             }
-            ms_outHtml.push('</ul>');
-        }
-        return ms_outHtml.join("");
+
+        });
+        return `<ul id="Paging" class="ms-srch-Paging">${_outHtml.join("")}</ul>`;
     }
 
     /**
