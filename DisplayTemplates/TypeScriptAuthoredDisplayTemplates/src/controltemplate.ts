@@ -81,8 +81,9 @@ class ControlTemplate {
      * 
      * @param htmlTmpl The HTML template
      */
-    public set_HtmlTemplate(htmlTmpl: string): void {
+    public set_HtmlTemplate(htmlTmpl: string): ControlTemplate {
         this.htmlTemplate = htmlTmpl;
+        return this;
     }
 
     /**
@@ -92,8 +93,9 @@ class ControlTemplate {
      * 
      * @param itmWrpTmpl The item wrapper template
      */
-    public set_ItemWrapperTemplate(itmWrpTmpl: string): void {
+    public set_ItemWrapperTemplate(itmWrpTmpl: string): ControlTemplate {
         this.itemWrapperTemplate = itmWrpTmpl;
+        return this;
     }
 
     public register(): void {
