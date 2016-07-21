@@ -90,8 +90,9 @@ class ItemTemplate {
      * 
      * @param htmlTmpl The HTML template
      */
-    public set_HtmlTemplate(htmlTmpl: string): void {
+    public set_HtmlTemplate(htmlTmpl: string): ItemTemplate {
         this.htmlTemplate = htmlTmpl;
+        return this;
     }
 
     public register(): void {
