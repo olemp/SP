@@ -19,6 +19,7 @@ class ControlTemplate {
     private itemWrapperTemplate = "<li>{0}</li>";
     private useCache: boolean;
     private postRenderCallbacks: Function[];
+    private pagingCssClass = "ms-srch-Paging";
 
     /**
      * Constructor
@@ -92,7 +93,7 @@ class ControlTemplate {
             }
 
         });
-        return `<ul id="Paging" class="ms-srch-Paging">${_outHtml.join("")}</ul>`;
+        return `<ul class="${this.pagingCssClass}">${_outHtml.join("")}</ul>`;
     }
 
     /**
@@ -145,6 +146,16 @@ class ControlTemplate {
      */
     public set_ItemWrapperTemplate(itmWrpTmpl: string): ControlTemplate {
         this.itemWrapperTemplate = itmWrpTmpl;
+        return this;
+    }
+
+    /**
+     * Sets the paging css class
+     * 
+     * @param pagingCssClass The paging css class
+     */
+    public set_PagingCssClass(pagingCssClass: string): ControlTemplate {
+        this.pagingCssClass = pagingCssClass;
         return this;
     }
 
