@@ -7,6 +7,7 @@ declare function RegisterModuleInit(path: string, regFunc: Function): any;
 declare function GetThemedImageUrl(str): string;
 declare function $htmlEncode(str): string;
 declare function $urlHtmlEncode(str): string;
+declare function AddPostRenderCallback(ctx, cb): void;
 
 /**
  * Defines a Control Template
@@ -17,6 +18,7 @@ class ControlTemplate {
     private htmlTemplate: string;
     private itemWrapperTemplate = "<li>{0}</li>";
     private useCache: boolean;
+    private postRenderCallbacks: Function[];
 
     /**
      * Constructor
@@ -28,6 +30,7 @@ class ControlTemplate {
         this.filename = filename.toLowerCase();
         this.targetControlType = targetControlType;
         this.useCache = useCache;
+        this.postRenderCallbacks = [];
     }
 
     /**
@@ -103,6 +106,7 @@ class ControlTemplate {
             "TemplateType": "Control",
             "TargetControlType": _ctx.targetControlType,
         };
+        _ctx.postRenderCallbacks.forEach(cb => AddPostRenderCallback(ctx, cb));
         if (!$isNull(ctx.ClientControl) && !$isNull(ctx.ClientControl.shouldRenderControl) && !ctx.ClientControl.shouldRenderControl()) {
             return "";
         }
@@ -141,6 +145,16 @@ class ControlTemplate {
      */
     public set_ItemWrapperTemplate(itmWrpTmpl: string): ControlTemplate {
         this.itemWrapperTemplate = itmWrpTmpl;
+        return this;
+    }
+
+    /**
+     * Adds a post render callback
+     * 
+     * @param callback The callback function
+     */
+    public add_postRenderCallback(callback: Function): ControlTemplate {
+        this.postRenderCallbacks.push(callback);
         return this;
     }
 
