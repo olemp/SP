@@ -79,12 +79,12 @@ class ControlTemplate {
                         var iconClass = Srch.U.isRTL() ? "ms-srch-pagingPrev" : "ms-srch-pagingNext";
                         ms_outHtml.push(`<li id="PagingImageLink"><a id="PageLinkNext" href="#" class="ms-commandLink ms-promlink-button ms-promlink-button-enabled ms-verticalAlignMiddle" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">
                             <span class="ms-promlink-button-image">
-                            <img src="', $urlHtmlEncode(imagesUrl), '" class="', $htmlEncode(iconClass), '" alt="', $htmlEncode(pl.title), '" />
+                            <img src="${$urlHtmlEncode(imagesUrl)}" class="${$htmlEncode(iconClass)}" alt="${$htmlEncode(pl.title)}" />
                             </span>
                             </a></li>`);
                     } else {
                         var pageLinkId = "PageLink_" + pl.pageNumber;
-                        ms_outHtml.push(`<li id="PagingLink"><a id="${$htmlEncode(pageLinkId)}" href="#" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(', $htmlEncode(pl.startItem), ');return Srch.U.cancelEvent(event);">${$htmlEncode(pl.pageNumber)}</a></li>`);
+                        ms_outHtml.push(`<li id="PagingLink"><a id="${$htmlEncode(pageLinkId)}" href="#" title="${$htmlEncode(pl.title)}" onclick="$getClientControl(this).page(${$htmlEncode(pl.startItem)});return Srch.U.cancelEvent(event);">${$htmlEncode(pl.pageNumber)}</a></li>`);
                     }
                 }
             }
