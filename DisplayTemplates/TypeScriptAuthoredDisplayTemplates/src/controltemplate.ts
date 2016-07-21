@@ -64,10 +64,10 @@ class ControlTemplate {
     /**
      * Renders the paging element
      */
-    private renderPaging(ctx: any) {
+    private renderPaging(ctx: any): string {
         var pagingInfo = ctx.ClientControl.get_pagingInfo(), ms_outHtml = [];
         if (!pagingInfo || pagingInfo.length == 0) {
-            return;
+            return "";
         }
         let _outHtml = pagingInfo.map(pl => {
             if ($isNull(pl)) {
