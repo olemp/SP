@@ -3,6 +3,7 @@
  */
 declare var Srch: any;
 declare function $isNull(clientControl): boolean;
+declare function $setResultObject(gropId, currentGroup): void;
 declare function RegisterModuleInit(path: string, regFunc: Function): any;
 
 /**
@@ -55,9 +56,13 @@ class GroupTemplate {
             "TemplateType": "Group",
             "TargetControlType": _ctx.targetControlType,
         };
+        var id = ctx.ClientControl.get_nextUniqueId();
+        var groupId = id + Srch.U.Ids.group;
+        $setResultObject(groupId, ctx.CurrentGroup);
         ctx.ListDataJSONGroupsKey = "ResultRows";
+        let htmlMarkup = ctx.RenderItems(ctx);
         ctx.DisplayTemplateData = cachePreviousTemplateData;
-        return ctx.RenderItems(ctx);
+        return htmlMarkup;
     }
 
     public register(): void {
