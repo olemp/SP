@@ -13,6 +13,7 @@ class ControlTemplate {
     private targetControlType: Array<string>;
     private htmlTemplate: string;
     private itemWrapperTemplate: string;
+    private useCache: boolean;
 
     /**
      * Constructor
@@ -20,9 +21,10 @@ class ControlTemplate {
      * @param template The filename of the template
      * @param targetControlType The target control types for the template
      */
-    constructor(filename: string, targetControlType: Array<string>) {
+    constructor(filename: string, targetControlType: Array<string>, useCache = false) {
         this.filename = filename.toLowerCase();
         this.targetControlType = targetControlType;
+        this.useCache = useCache;
     }
 
     /**
@@ -57,7 +59,7 @@ class ControlTemplate {
      * Renders the template
      */
     private render(ctx: any, _ctx: ControlTemplate): string {
-        let itemTemplateId = ctx.ClientControl.get_itemTemplateId().toLowerCase();
+        let itemTemplateId = ctx.ClientControl.get_renderTemplateId().toLowerCase();
         let cachePreviousTemplateData = ctx.DisplayTemplateData;
         ctx.DisplayTemplateData = {
             "TemplateUrl": itemTemplateId,
@@ -70,7 +72,9 @@ class ControlTemplate {
         ctx.ListDataJSONGroupsKey = "ResultTables";
         ctx.ItemRenderWrapper = _ctx.itemRendering;
         let htmlMarkup = String.format(this.htmlTemplate || `<ul class="cbs-List">{0}</ul>`, ctx.RenderGroups(ctx));
-        ctx.DisplayTemplateData = cachePreviousTemplateData;
+        if (_ctx.useCache) {
+            ctx.DisplayTemplateData = cachePreviousTemplateData;
+        }
         return htmlMarkup;
     }
 

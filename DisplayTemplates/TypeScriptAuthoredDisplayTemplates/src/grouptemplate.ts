@@ -12,6 +12,7 @@ declare function RegisterModuleInit(path: string, regFunc: Function): any;
 class GroupTemplate {
     private filename: string;
     private targetControlType: Array<string>;
+    private useCache: boolean;
 
     /**
      * Constructor
@@ -19,9 +20,10 @@ class GroupTemplate {
      * @param template The filename of the template
      * @param targetControlType The target control types for the template
      */
-    constructor(filename: string, targetControlType: Array<string>) {
+    constructor(filename: string, targetControlType: Array<string>, useCache = false) {
         this.filename = filename.toLowerCase();
         this.targetControlType = targetControlType;
+        this.useCache = useCache;
     }
 
     /**
@@ -61,7 +63,9 @@ class GroupTemplate {
         $setResultObject(groupId, ctx.CurrentGroup);
         ctx.ListDataJSONGroupsKey = "ResultRows";
         let htmlMarkup = ctx.RenderItems(ctx);
-        ctx.DisplayTemplateData = cachePreviousTemplateData;
+        if (_ctx.useCache) {
+            ctx.DisplayTemplateData = cachePreviousTemplateData;
+        }
         return htmlMarkup;
     }
 

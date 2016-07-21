@@ -13,6 +13,7 @@ class ItemTemplate {
     private propertyMappings: any;
     private targetControlType: Array<string>;
     private htmlTemplate: string;
+    private useCache: boolean;
 
     /**
      * Constructor
@@ -21,10 +22,11 @@ class ItemTemplate {
      * @param propertyMappings The property mappings for the template
      * @param targetControlType The target control types for the template
      */
-    constructor(filename: string, propertyMappings: any, targetControlType: Array<string>) {
+    constructor(filename: string, propertyMappings: any, targetControlType: Array<string>, useCache = false) {
         this.filename = filename.toLowerCase();
         this.propertyMappings = propertyMappings;
         this.targetControlType = targetControlType;
+        this.useCache = useCache;
     }
 
     /**
@@ -80,8 +82,10 @@ class ItemTemplate {
         let itemValues = {};
         Object.keys(_ctx.propertyMappings).forEach(key => itemValues[key] = $getItemValue(ctx, key));
         let htmlMarkup = _ctx.replaceTokens(_ctx.htmlTemplate, itemValues);
-        ctx.ItemValues = cachePreviousItemValuesFunction;
-        ctx.DisplayTemplateData = cachePreviousTemplateData;
+        if (_ctx.useCache) {
+            ctx.ItemValues = cachePreviousItemValuesFunction;
+            ctx.DisplayTemplateData = cachePreviousTemplateData;
+        }
         return htmlMarkup;
     }
 
