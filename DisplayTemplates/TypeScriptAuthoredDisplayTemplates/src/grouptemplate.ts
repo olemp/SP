@@ -49,7 +49,7 @@ class GroupTemplate {
      * Renders the template
      */
     private render(ctx: any, _ctx: GroupTemplate): string {
-        let groupTemplateId = ctx.ClientControl.get_itemTemplateId().toLowerCase();
+        let groupTemplateId = ctx.ClientControl.get_groupTemplateId().toLowerCase();
         let cachePreviousTemplateData = ctx.DisplayTemplateData;
         ctx.DisplayTemplateData = {
             "TemplateUrl": groupTemplateId,
