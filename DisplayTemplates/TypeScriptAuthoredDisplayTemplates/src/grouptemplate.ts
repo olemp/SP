@@ -76,6 +76,9 @@ class GroupTemplate {
                 Srch.U.registerRenderTemplateByName(absPath, (ctx) => {
                     return this.render(ctx, this);
                 });
+                Srch.U.registerRenderTemplateByName(this.filename.replace(".js", ""), (ctx) => {
+                    return this.render(ctx, this);
+                });
             }
             if (typeof (RegisterModuleInit) === "function" && typeof (Srch.U.replaceUrlTokens) === "function") {
                 RegisterModuleInit(Srch.U.replaceUrlTokens(absPath), this.register);
