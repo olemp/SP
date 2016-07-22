@@ -16,6 +16,7 @@ class ControlTemplate {
     private filename: string;
     private targetControlType: Array<string>;
     private htmlTemplate: string;
+    private emptyResultTemplate = "<div><p>{0}</p></div>"
     private itemWrapperTemplate = "<li>{0}</li>";
     private useCache: boolean;
     private postRenderCallbacks: Function[];
@@ -112,17 +113,22 @@ class ControlTemplate {
             return "";
         }
         ctx.ListDataJSONGroupsKey = "ResultTables";
-        ctx.ItemRenderWrapper = (itemRenderResult, inCtx, tpl) => {
-            return _ctx.itemRendering(_ctx, itemRenderResult, inCtx, tpl);
-        } 
-        let htmlMarkup = String.format(this.htmlTemplate || `<ul class="cbs-List">{0}</ul>`, ctx.RenderGroups(ctx));
-        if (ctx.ClientControl.get_showPaging()) {
-            htmlMarkup += this.renderPaging(ctx);
+
+        if (ctx.DataProvider.get_totalRows() > 0) {
+            ctx.ItemRenderWrapper = (itemRenderResult, inCtx, tpl) => {
+                return _ctx.itemRendering(_ctx, itemRenderResult, inCtx, tpl);
+            }
+            let htmlMarkup = String.format(this.htmlTemplate || `<ul class="cbs-List">{0}</ul>`, ctx.RenderGroups(ctx));
+            if (ctx.ClientControl.get_showPaging()) {
+                htmlMarkup += this.renderPaging(ctx);
+            }
+            if (_ctx.useCache) {
+                ctx.DisplayTemplateData = cachePreviousTemplateData;
+            }
+            return htmlMarkup;
+        } else {
+            return String.format(this.emptyResultTemplate, ctx.ClientControl.get_emptyMessage());
         }
-        if (_ctx.useCache) {
-            ctx.DisplayTemplateData = cachePreviousTemplateData;
-        }
-        return htmlMarkup;
     }
 
     /**
@@ -130,10 +136,10 @@ class ControlTemplate {
      * which is replaced with the rendered items. 
      * Defaults to <ul class="cbs-List">{0}</ul>.
      * 
-     * @param htmlTmpl The HTML template
+     * @param value The HTML template
      */
-    public set_HtmlTemplate(htmlTmpl: string): ControlTemplate {
-        this.htmlTemplate = htmlTmpl;
+    public set_HtmlTemplate(value: string): ControlTemplate {
+        this.htmlTemplate = value;
         return this;
     }
 
@@ -142,20 +148,30 @@ class ControlTemplate {
      * which is replaced with the rendered item.
      * Defaults to <li>{0}</li>.
      * 
-     * @param itmWrpTmpl The item wrapper template
+     * @param value The item wrapper template
      */
-    public set_ItemWrapperTemplate(itmWrpTmpl: string): ControlTemplate {
-        this.itemWrapperTemplate = itmWrpTmpl;
+    public set_ItemWrapperTemplate(value: string): ControlTemplate {
+        this.itemWrapperTemplate = value;
         return this;
     }
 
     /**
      * Sets the paging css class
      * 
-     * @param pagingCssClass The paging css class
+     * @param value The paging css class
      */
-    public set_PagingCssClass(pagingCssClass: string): ControlTemplate {
-        this.pagingCssClass = pagingCssClass;
+    public set_PagingCssClass(value: string): ControlTemplate {
+        this.pagingCssClass = value;
+        return this;
+    }
+
+    /**
+     * Sets the empty result template
+     * 
+     * @param value The empty result template
+     */
+    public set_EmptyResultTemplate(value: string): ControlTemplate {
+        this.emptyResultTemplate = value;
         return this;
     }
 
