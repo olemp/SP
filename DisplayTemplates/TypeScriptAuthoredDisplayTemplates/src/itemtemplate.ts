@@ -14,6 +14,8 @@ class ItemTemplate {
     private targetControlType: Array<string>;
     private htmlTemplate: string;
     private useCache: boolean;
+    private overrideItemValues: Function;
+
 
     /**
      * Constructor
@@ -81,6 +83,9 @@ class ItemTemplate {
         };
         let itemValues = {};
         Object.keys(_ctx.propertyMappings).forEach(key => itemValues[key] = $getItemValue(ctx, key));
+        if(_ctx.overrideItemValues) {
+            itemValues = _ctx.overrideItemValues(itemValues);
+        }
         let htmlMarkup = _ctx.replaceTokens(_ctx.htmlTemplate, itemValues);
         if (_ctx.useCache) {
             ctx.ItemValues = cachePreviousItemValuesFunction;
@@ -96,6 +101,16 @@ class ItemTemplate {
      */
     public set_HtmlTemplate(htmlTmpl: string): ItemTemplate {
         this.htmlTemplate = htmlTmpl;
+        return this;
+    }
+
+    /**
+     * Sets the overrideItemValues function
+     * 
+     * @param value The overideitemvalues function
+     */
+    public set_overrideItemValues(value: Function): ItemTemplate {
+        this.overrideItemValues = value;
         return this;
     }
 
