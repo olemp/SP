@@ -84,7 +84,7 @@ class ItemTemplate {
         let itemValues = {};
         Object.keys(_ctx.propertyMappings).forEach(key => itemValues[key] = $getItemValue(ctx, key));
         if(_ctx.overrideItemValues) {
-            itemValues = _ctx.overrideItemValues(itemValues);
+            itemValues = _ctx.overrideItemValues(itemValues, ctx);
         }
         let htmlMarkup = _ctx.replaceTokens(_ctx.htmlTemplate, itemValues);
         if (_ctx.useCache) {
